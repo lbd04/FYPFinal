@@ -1,0 +1,113 @@
+
+    $(document).ready(function(){
+        $("#editDiv").dialog({autoOpen:false});
+        $('#Semester').hide();
+        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+            var step = $(e.target).data('step');
+            var percent = (parseInt(step) / 3) * 100;
+            $('.progress-bar').css({width: percent + '%'});
+            $('.progress-bar').text("Step " + step + " of 3");
+        });
+    });
+
+    var message = "<?php echo $_POST["fname"]   ?>" ;
+    var courses ;
+    var index = 1 ;
+    var app = angular.module('myApp', []);
+    app.controller('customersCtrl', function($scope, $http) {
+        $http({
+            method: 'POST',
+            url: "http://myaubadvisor-lbd04.rhcloud.com/getcourses.php",
+            data: "username=" + message,
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+        }).success(
+                function (response) {
+                    //console.log (response) ;
+                    var obj = angular.fromJson(response.courses);
+                    $scope.names = obj;
+                    $scope.coursestotake ;
+                    $scope.future = [
+                    ];
+                    console.log (JSON.stringify($scope.names)) ;
+                    //console.log (angular.identity($scope.names)) ;
+                    $scope.deleteUser = function(ind){
+                        var ajax = ajaxObj("POST", "delete.php");
+                        ajax.onreadystatechange = function() {
+                            if(ajaxReturn(ajax) == true) {
+                                //alert (ajax.responseText) ;
+                            }
+                        }
+                        ajax.send( "username=" + message + "&coursestoadd="+ JSON.stringify($scope.names[ind]));
+                        $scope.names.splice (ind, 1) ;
+                    };
+                    $scope.editUser = function(ind){
+                        console.log ($scope.names[ind].Course ) ;
+                        $scope.currentIndex = ind;
+                        $scope.Course = $scope.names[ind].Course;
+                        $scope.Grade = $scope.names[ind].Grade;
+                        $("#editDiv").dialog("option", "width", "50%");
+                        $("#editDiv").dialog("open");
+                    };
+
+                    $scope.saveUser = function(){
+                        if ($scope.Grade == "") {
+                            $scope.names[$scope.currentIndex].Grade = null;
+                        }
+                        else if ($scope.Grade > -1 && $scope.Grade < 101){
+                            $scope.names[$scope.currentIndex].Grade = parseInt( $scope.Grade);
+                        }
+                        else {
+                            alert ( "Your grade should be between 0 and 100") ;
+                        }
+                        $("#editDiv").dialog("close");
+                        var ajax = ajaxObj("POST", "update.php");
+                        ajax.onreadystatechange = function() {
+                            if(ajaxReturn(ajax) == true) {
+                                //alert (ajax.responseText) ;
+                            }
+                        }
+                        ajax.send( "username=" + message + "&coursestoadd="+ JSON.stringify($scope.names[$scope.currentIndex]));
+                    };
+
+                    $scope.cancelSave = function(){
+                        $("#editDiv").dialog("close");
+                    };
+
+                    $scope.goNext = function(i){
+                        $('[href=#step'+(i+1)+']').tab('show');
+                        return false
+                    }
+
+
+                    $scope.semester = function () {
+                        var ajax = ajaxObj("POST", "futurecourses.php");
+                        var obj ;
+                        $scope.coursestotake = [];
+                        ajax.onreadystatechange = function() {
+                            if(ajaxReturn(ajax) == true) {
+                                alert (ajax.responseText) ;
+                                obj = angular.fromJson(ajax.responseText);
+                                $scope.coursestotake = angular.fromJson(obj.courses);
+                                console.log ( $scope.coursestotake)	;
+                                console.log (angular.identity($scope.coursestotake)) ;
+                            }
+                        }
+                        ajax.send( "username=" + message);
+                        var v = document.getElementById("chosen").value;
+                        document.getElementById("sem").innerHTML = v ;
+                        $('#Semester').show();
+                    }
+
+                    $scope.pushpin = function (ind) {
+                        var c = $scope.names [ind] ;
+                        console.log (c) ;
+                        $scope.future.push(
+                            {
+                                Course:$scope.coursestotake[ind].Course,
+                                Credits:"3"
+                            }
+                        );
+                        $scope.coursestotake.splice (ind , 1) ;
+                    }
+                });
+    });
