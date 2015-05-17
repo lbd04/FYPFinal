@@ -244,7 +244,7 @@ creditsofar = 0 ;
                 <br>
 
                 <button class="btn btn-success btn-lg" ng-click="saveUser()" ng-disabled="error || incomplete">
-                    Save User
+                    Save Course
                 </button>
                 <button class="btn btn-danger btn-lg" ng-click="cancelSave()">
                     Cancel
