@@ -14,6 +14,9 @@
 <script src="js/angular-resource.min.js"></script>
 
 <script>
+
+var semestercredit = 0 ;
+creditsofar = 0 ;
     $(document).ready(function(){
         $("#editDiv").dialog({autoOpen:false});
         $('#Semester').hide();
@@ -95,6 +98,7 @@
                         $('[href=#step'+(i+1)+']').tab('show');
 						if (i == 0) {
 							$scope.future = [] ;
+							creditsofar = 0 ;
 						}
                         return false
                     }
@@ -121,12 +125,15 @@
                         var v = document.getElementById("chosen").value;
 						if ( parseInt(v) == 1) {
 							document.getElementById("sem").innerHTML = "Fall" ;
+							semestercredit = 18 ; 
 						}
 						else if (parseInt(v)==2) {
-							document.getElementById("sem").innerHTML = "Spring" ;	
+							document.getElementById("sem").innerHTML = "Spring" ;
+							semestercredit = 18 ;	
 						}
 						else if (parseInt(v)==3) {
 							document.getElementById("sem").innerHTML = "Summer" ;	
+							semestercredit = 10 ;
 						}
                         $('#Semester').show();
 						//alert (3) ;
@@ -134,14 +141,22 @@
 
                     $scope.pushpin = function (ind) {
                         var c = $scope.names [ind] ;
-                        console.log (c) ;
+                        console.log (creditsofar + "  " + semestercredit) ;
+						if (creditsofar + parseInt($scope.coursestotake[ind].Credits) < semestercredit){
                         $scope.future.push(
                             {
                                 Course:$scope.coursestotake[ind].Course,
-                                Credits:"3"
+                                Credits:$scope.coursestotake[ind].Credits
                             }
                         );
-                        $scope.coursestotake.splice (ind , 1) ;
+						creditsofar = creditsofar + parseInt($scope.coursestotake[ind].Credits) ;
+						$scope.coursestotake.splice (ind , 1) ;
+						document.getElementById("totalcredits").innerHTML = creditsofar ;
+						}
+						else {
+						alert ("You have reached the max credits for this semester") ;
+						}
+                        
                     }
 					
 					$scope.delete = function (ind) {
@@ -158,6 +173,7 @@
 							}
                         }
                         ajax.send( "username=" + message + "&newsemester="+ JSON.stringify($scope.future));
+						creditsofar = 0 ;
 						
 					}
 					
@@ -392,6 +408,10 @@
                         <button class="btn" ng-click="delete($index)"><span class="glyphicon glyphicon-trash"></span></button>
                     </td>
                 </tr>
+				<tr>
+					<td> <b> Total credits </b></td>
+					<td id="totalcredits" style = "text-weight : bold ;"></td>
+				</tr>
             </tbody>
         </table>
 
