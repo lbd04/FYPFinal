@@ -9,6 +9,10 @@ $getc = "" ;
 
 	foreach ( $newcourses as $course) {
 		$getc = "Delete FROM enrolls WHERE username = \"" .$data . "\" AND courseID= \"" . $newcourses->Course . "\" ;" ;
+		if ( $course->Attribute == "natural") {
+			$getc = 'update coursescount set naturale = naturale + 1 where username = "'.$data.'"  ;' ;
+		    $db_conx->query($getc) ;
+		}
 	}
 	if ($db_conx->query($getc) == true){
 	exit(); 
