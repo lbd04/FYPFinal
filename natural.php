@@ -14,7 +14,7 @@ foreach($true as $rs) {
 }
 
 if ($outp > 0) {
-	$getc = 'SELECT courseID From ge_verify WHERE  courseID not in (SELECT courseID FROM enrolls where  username= "' .$data . '") and attribute = "Natural Science" ;' ;
+	$getc = 'SELECT courseID From ge_verify WHERE  courseID not in (SELECT courseID FROM enrolls where  username= "' .$data . '") and courseID not in (SELECT courseID FROM temp where  username= "' .$data . '") and attribute = "Natural Science" ;' ;
     $true = $db_conx->query($getc) ;
 
      foreach($true as $rs) { 

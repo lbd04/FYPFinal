@@ -203,7 +203,7 @@ var cvsp2 = 1 ;
                                 obj = angular.fromJson(ajax.responseText);
                                 $scope.majortotake = angular.fromJson(obj.courses);
                                 //console.log ( $scope.majortotake.length)	;
-								remnatural = $scope.remainnumber[10].number;
+								
                                 console.log (angular.identity($scope.majortotake)) ;
 								
 								//console.log (1) ;
@@ -231,14 +231,24 @@ var cvsp2 = 1 ;
 							if ($scope.majortotake[ind].Attribute == "cvsp1") {
 							cvsp1 = cvsp1 - 1 ;
 							}
-                        $scope.future.push(
+							var ajax = ajaxObj("POST", "furureadd.php");
+							ajax.onreadystatechange = function() {
+                            if(ajaxReturn(ajax) == true) {
+                                $scope.future.push(
                             {
                                 Course:$scope.majortotake[ind].Course,
-                                Credits:$scope.majortotake[ind].Credits
+                                Credits:$scope.majortotake[ind].Credits,
+								 Attribute:$scope.majortotake[ind].Attribute
                             }
                         );
-						creditsofar = creditsofar + parseInt($scope.majortotake[ind].Credits) ;
 						$scope.majortotake.splice (ind , 1) ;
+								$scope.$apply();
+								//alert (ajax.responseText) ;
+                            }
+                        }
+                        ajax.send( "username=" + message+ "&course=" + $scope.majortotake[ind].Course) ;
+						creditsofar = creditsofar + parseInt($scope.majortotake[ind].Credits) ;
+						//$scope.majortotake.splice (ind , 1) ;
 						document.getElementById("totalcredits").innerHTML = creditsofar ;
 						}
 							else {
@@ -250,9 +260,15 @@ var cvsp2 = 1 ;
 					
 					$scope.delete = function (ind) {
 						creditsofar = creditsofar - parseInt($scope.future[ind].Credits) ;
-						$scope.$apply();
-						$scope.majortotake.unshift ($scope.future[ind]) ;
-						$scope.future.splice (ind , 1) ;
+						var ajax = ajaxObj("POST", "futuredelete.php");
+							ajax.onreadystatechange = function() {
+                            if(ajaxReturn(ajax) == true) {
+					        	$scope.majortotake.unshift ($scope.future[ind]) ;
+						        $scope.future.splice (ind , 1) ;
+								$scope.$apply();
+                            }
+                        }
+                        ajax.send( "username=" + message+ "&course=" + $scope.future[ind].Course) ;
 						if ($scope.majortotake[ind].Attribute == "natural" ) {
 							remnatural = remnatural + 1;
 						}
@@ -266,7 +282,9 @@ var cvsp2 = 1 ;
                         ajax.onreadystatechange = function() {
                             if(ajaxReturn(ajax) == true) {
                             //alert (ajax.responseText) ;
-							location.reload();
+							//location.reload();
+							document.getElementById("senduser").value = message ; 
+				            document.getElementById("personalthing").submit() ; 
 							}
                         }
                         ajax.send( "username=" + message + "&newsemester="+ JSON.stringify($scope.future));
@@ -282,6 +300,7 @@ var cvsp2 = 1 ;
                                 obj = angular.fromJson(ajax.responseText);
                                 $scope.remainnumber = angular.fromJson(obj.courses);
 							    $scope.$apply();
+								remnatural = $scope.remainnumber[10].number;
 								//console.log () ;
 							}
                         }
@@ -294,6 +313,9 @@ var cvsp2 = 1 ;
 
 <body ng-app="myApp" ng-controller="customersCtrl" style="padding-bottom : 20px ;">
 
+<form id="personalthing" action="ang5.php" method="POST"  style="display:none">
+  <input id ="senduser" type="text" name="fname">
+</form>
 <div class="container">
         <h3><?= $_POST["fname"] ;  ?></h3>
 
@@ -416,8 +438,6 @@ var cvsp2 = 1 ;
    
     <br />
     <br />
-							<label  class="btn"  ng-click="semesters" >Major Courses</label>
-						<label class="btn"  ng-click="semesterss">English</label>
     <div class="progress">
         <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="1" aria-valuemin="1" aria-valuemax="2" style="width: 33%;">
             Step 1 of 2
