@@ -45,10 +45,12 @@ $sql = "INSERT INTO student (name, username, major, confirmed, password)
 $query = mysqli_query($db_conx, $sql);
 
 if (strcmp ($m , "cmps") ==0) {
+	$humanity = 2 + $arabic ; 
+	$free = 0 + $english ;
 	$arabic = 1 - $arabic ;
 	$english = 2 - $english ;
 	$sql = 'INSERT INTO coursescount 
-       VALUES( "' . $u . '" ,12, 3, 3, 2, '.$arabic.', '.$english.', 1 , 1 , 1 , 2,1 , 2 ,2 ) ;';
+       VALUES( "' . $u . '" ,12, 3, 3, 2, '.$arabic.', '.$english.', 1 , 1 , 1 , 2,1 , 2 ,'.$humanity.' , '.$free.' ) ;';
     $query = mysqli_query($db_conx, $sql);
 }
 else if (strcmp ($m , "MATH") ==0) {

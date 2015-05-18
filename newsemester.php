@@ -9,6 +9,16 @@ $outp = "" ;
 		$db_conx->query($getc) ;
 		$outp = $outp . " " . $course->Course ;
 	}
-	echo $outp ;
-	exit(); 
+$getc = "SELECT courseID ,grade From enrolls WHERE username = \"" .$data . "\" ;" ;
+$true = $db_conx->query($getc) ;
+$outp ="" ;
+$num = 1 ;
+foreach($true as $rs) { 
+    // $outp [$num] = array ( "Course" => $rs['courseID'] , "Grade" => $rs['grade'] ) ; 
+	 //$num = $num + 1;
+	 $outp = $outp . '{"Course" :"' . $rs['courseID']   . '","Grade": "' . $rs['grade'] . '"},';
+}
+
+
+echo  '{"courses" : [' . substr($outp ,0, -1) . ']}' ;
 ?>

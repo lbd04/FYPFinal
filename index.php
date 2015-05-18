@@ -91,6 +91,9 @@
 		}  else {
 		_("signupbtn").style.display = "none";
 		_("status").innerHTML = 'please wait ...';
+		//alert (3) ;
+		if (/^[A-Z-a-z]{3}\[0-9]{2}$/.test(u) ) {
+		//	alert (2) ;
 		var ajax = ajaxObj("POST", "completesignup.php");
 			ajax.onreadystatechange = function() {
 			if(ajaxReturn(ajax) == true) {
@@ -113,6 +116,14 @@
 				}
 			}
 			ajax.send("u="+u+"&n="+n+"&p="+p1+"&m="+m+"&e="+e+"&english="+ english + "&arabic=" + arabic );
+		}
+		else {
+			alert ("Come on its a wrong username !!!") ;
+					_("signupbtn").style.display = "block";
+					_("status").innerHTML = '';
+					$('#signupform')[0].reset();
+					_("unamestatus").innerHTML = '' ;
+		}
 		}
 	}
 	
@@ -320,7 +331,7 @@
 					</br></br>
 					<div>First English Course: </div>
 					<select  id="english">
-					   <option value="0">English 102</option>
+					   <option value="-1">English 102</option>
 					   <option value="0">English 203</option>
                        <option value="1">English 204</option>					   
 					</select>

@@ -1,3 +1,10 @@
+
+<?php
+if (!isset ($_POST["fname"] )){
+	header('Location: index.php');
+}
+?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -16,7 +23,10 @@
 <script>
 
 var semestercredit = 0 ;
-creditsofar = 0 ;
+var creditsofar = 0 ;
+var remnatural = 0 ; 
+var cvsp1 = 1 ; 
+var cvsp2 = 1 ;
     $(document).ready(function(){
         $("#editDiv").dialog({autoOpen:false});
         $('#Semester').hide();
@@ -44,11 +54,12 @@ creditsofar = 0 ;
                     //console.log (response) ;
                     var obj = angular.fromJson(response.courses);
                     $scope.names = obj;
-                    $scope.coursestotake ;
+                    $scope.majortotake ;
                     $scope.future = [
                     ];
 					$scope.remainnumber = [
                     ];
+					
                     console.log (JSON.stringify($scope.names)) ;
                     //console.log (angular.identity($scope.names)) ;
                     $scope.deleteUser = function(ind){
@@ -56,6 +67,7 @@ creditsofar = 0 ;
                         ajax.onreadystatechange = function() {
                             if(ajaxReturn(ajax) == true) {
                                 //alert (ajax.responseText) ;
+								
                             }
                         }
                         ajax.send( "username=" + message + "&coursestoadd="+ JSON.stringify($scope.names[ind]));
@@ -71,6 +83,7 @@ creditsofar = 0 ;
                     };
 
                     $scope.saveUser = function(){
+						var complete = 0 ;
                         if ($scope.Grade == "") {
                             $scope.names[$scope.currentIndex].Grade = null;
                         }
@@ -80,14 +93,17 @@ creditsofar = 0 ;
                         else {
                             alert ( "Your grade should be between 0 and 100") ;
                         }
+						if ( $scope.Grade > 59) {
+							complete = 1 ;
+						}
                         $("#editDiv").dialog("close");
                         var ajax = ajaxObj("POST", "update.php");
                         ajax.onreadystatechange = function() {
                             if(ajaxReturn(ajax) == true) {
-                                //alert (ajax.responseText) ;
+                                alert (ajax.responseText) ;
                             }
                         }
-                        ajax.send( "username=" + message + "&coursestoadd="+ JSON.stringify($scope.names[$scope.currentIndex]));
+                        ajax.send( "username=" + message + "&coursestoadd="+ JSON.stringify($scope.names[$scope.currentIndex]) +"&complete=" + complete);
                     };
 
                     $scope.cancelSave = function(){
@@ -105,19 +121,19 @@ creditsofar = 0 ;
 
 
                     $scope.semester = function () {
+						$scope.getnumber () ;
                         var ajax = ajaxObj("POST", "futurecourses.php");
                         var obj ;
-                        $scope.coursestotake = [];
+                        $scope.majortotake = [];
                         ajax.onreadystatechange = function() {
                             if(ajaxReturn(ajax) == true) {
                                // alert (ajax.responseText) ;
                                 obj = angular.fromJson(ajax.responseText);
-                                $scope.coursestotake = angular.fromJson(obj.courses);
-                                console.log ( $scope.coursestotake.length)	;
-                                console.log (angular.identity($scope.coursestotake)) ;
+                                $scope.majortotake = angular.fromJson(obj.courses);
+                                rem  = $scope.majortotake.length	;
+                                console.log (angular.identity($scope.majortotake)) ;
 								console.log (1) ;
 								$scope.$apply();
-
                             }
                         }
 						//alert (1) ; 
@@ -138,30 +154,111 @@ creditsofar = 0 ;
                         $('#Semester').show();
 						//alert (3) ;
                     }
-
+					
+					$scope.semesters = function () {
+                        var ajax = ajaxObj("POST", "futurecourses.php");
+                        var obj ;
+                        $scope.majortotake = [];
+                        ajax.onreadystatechange = function() {
+                            if(ajaxReturn(ajax) == true) {
+                               // alert (ajax.responseText) ;
+                                obj = angular.fromJson(ajax.responseText);
+                                $scope.majortotake = angular.fromJson(obj.courses);
+                                rem  = $scope.majortotake.length	;
+                                //console.log (angular.identity($scope.majortotake)) ;
+								//console.log (1) ;
+								$scope.$apply();
+                            }
+                        }
+						//alert (1) ; 
+                        ajax.send( "username=" + message);
+                    }
+					
+					$scope.semesterss = function () {
+                        var ajax = ajaxObj("POST", "english.php");
+                        var obj ;
+                        $scope.majortotake = [];
+                        ajax.onreadystatechange = function() {
+                            if(ajaxReturn(ajax) == true) {
+                               // alert (ajax.responseText) ;
+                                obj = angular.fromJson(ajax.responseText);
+                                $scope.majortotake = angular.fromJson(obj.courses);
+                                rem  = $scope.majortotake.length	;
+                                //console.log (angular.identity($scope.majortotake)) ;
+								//console.log (1) ;
+								$scope.$apply();
+                            }
+                        }
+						//alert (1) ; 
+                        ajax.send( "username=" + message);
+                    }
+					
+					$scope.semesternatural = function () {
+                        var ajax = ajaxObj("POST", "natural.php");
+                        var obj ;
+                        $scope.majortotake = [];
+                        ajax.onreadystatechange = function() {
+                            if(ajaxReturn(ajax) == true) {
+                               //alert (ajax.responseText) ;
+                                obj = angular.fromJson(ajax.responseText);
+                                $scope.majortotake = angular.fromJson(obj.courses);
+                                //console.log ( $scope.majortotake.length)	;
+								remnatural = $scope.remainnumber[10].number;
+                                console.log (angular.identity($scope.majortotake)) ;
+								
+								//console.log (1) ;
+								$scope.$apply();
+                            }
+                        }
+						//alert (1) ; 
+                        ajax.send( "username=" + message);
+                    }
+					
                     $scope.pushpin = function (ind) {
                         var c = $scope.names [ind] ;
                         console.log (creditsofar + "  " + semestercredit) ;
-						if (creditsofar + parseInt($scope.coursestotake[ind].Credits) < semestercredit){
+					
+						if ($scope.majortotake[ind].Attribute == "natural" && remnatural == 0) {
+								alert ("You are out of credit for this category") ;
+							}
+							else if ($scope.majortotake[ind].Attribute == "cvsp1" && cvsp1 == 0) {
+								alert ("You are out of credit for this category") ;
+							}
+						else if (creditsofar + parseInt($scope.majortotake[ind].Credits) < semestercredit ){
+							if ($scope.majortotake[ind].Attribute == "natural") {
+							remnatural = remnatural - 1 ;
+							}
+							if ($scope.majortotake[ind].Attribute == "cvsp1") {
+							cvsp1 = cvsp1 - 1 ;
+							}
                         $scope.future.push(
                             {
-                                Course:$scope.coursestotake[ind].Course,
-                                Credits:$scope.coursestotake[ind].Credits
+                                Course:$scope.majortotake[ind].Course,
+                                Credits:$scope.majortotake[ind].Credits
                             }
                         );
-						creditsofar = creditsofar + parseInt($scope.coursestotake[ind].Credits) ;
-						$scope.coursestotake.splice (ind , 1) ;
+						creditsofar = creditsofar + parseInt($scope.majortotake[ind].Credits) ;
+						$scope.majortotake.splice (ind , 1) ;
 						document.getElementById("totalcredits").innerHTML = creditsofar ;
 						}
-						else {
+							else {
 						alert ("You have reached the max credits for this semester") ;
 						}
                         
                     }
 					
+					
 					$scope.delete = function (ind) {
-						$scope.coursestotake.unshift ($scope.future[ind]) ;
+						creditsofar = creditsofar - parseInt($scope.future[ind].Credits) ;
+						$scope.$apply();
+						$scope.majortotake.unshift ($scope.future[ind]) ;
 						$scope.future.splice (ind , 1) ;
+						if ($scope.majortotake[ind].Attribute == "natural" ) {
+							remnatural = remnatural + 1;
+						}
+						if ($scope.majortotake[ind].Attribute == "cvsp1" ) {
+							cvsp1 = cvsp1 + 1;
+						}
 					}
 					
 					$scope.savesemester = function () {
@@ -178,13 +275,14 @@ creditsofar = 0 ;
 					}
 					
 					$scope.getnumber = function () {
+					//	alert (1) ;
 						var ajax = ajaxObj("POST", "getremcourses.php");
                         ajax.onreadystatechange = function() {
                             if(ajaxReturn(ajax) == true) {
                                 obj = angular.fromJson(ajax.responseText);
                                 $scope.remainnumber = angular.fromJson(obj.courses);
 							    $scope.$apply();
-								console.log () ;
+								//console.log () ;
 							}
                         }
                         ajax.send( "username=" + message);
@@ -273,7 +371,7 @@ creditsofar = 0 ;
                                 <div class="panel-body">
                                     <table class="table table-hover">
                                         <tbody>
-                                            <tr class="panel-heading" ng-repeat="x in coursestotake" ng-if="x.Course != 0">
+                                            <tr class="panel-heading" ng-repeat="x in majortotake" ng-if="x.Course != 0">
                                                 <h4 class="panel-title">
                                                     <td>{{ x.Course }}</td>
                                                 </h4>
@@ -318,6 +416,8 @@ creditsofar = 0 ;
    
     <br />
     <br />
+							<label  class="btn"  ng-click="semesters" >Major Courses</label>
+						<label class="btn"  ng-click="semesterss">English</label>
     <div class="progress">
         <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="1" aria-valuemin="1" aria-valuemax="2" style="width: 33%;">
             Step 1 of 2
@@ -332,7 +432,6 @@ creditsofar = 0 ;
             </ul>
         </div>
     </div>
-
     <div class="tab-content">
         <div class="tab-pane fade in active" id="step1">
             <div class="well">
@@ -354,10 +453,18 @@ creditsofar = 0 ;
 
                 <h3>Choose your Courses</h3>
 				</br>
-                <label>Search: <input ng-model="searchText"></label>
+           <!--     <label>Search: <input ng-model="searchText"></label> -->
+							<!--<li><a href="#step3" data-toggle="tab" data-step="3">Step 3</a></li>-->
+					
                 </br>
-                <button class="btn" data-ng-click="">See courses</button>
+               <!-- <button class="btn" data-ng-click="">See courses</button> -->
                 <div style="height : 200px; overflow: scroll;">
+				        
+						    <label><button class="btn" data-ng-click="semesters($index)"><span class="">Major</span></button></label>
+							<label><button class="btn" data-ng-click="semesterss($index)"><span class="">English</span></button></label>
+							<label><button class="btn" data-ng-click="semesternatural($index)"><span class="">Natural Science</span></button></label>
+							<label><button class="btn" data-ng-click="semestercvsp1($index)"><span class="">CVSP 1</span></button></label>
+						
                     <table class="table table-hover">
                         <thead>
                             <tr>
@@ -366,7 +473,8 @@ creditsofar = 0 ;
                             </tr>
                         </thead>
                         <tbody>
-                            <tr class="panel-heading" ng-repeat="x in coursestotake | filter:searchText" ng-if="x.credit != 0">
+                           <!-- <tr class="panel-heading" ng-repeat="x in majortotake | filter:searchText" ng-if="x.credit != 0"> -->
+							<tr class="panel-heading" ng-repeat="x in majortotake " ng-if="x.credit != 0">
 
                                 <td>{{ x.Course }}</td>
                                 <td>{{ x.Credits }}</td>

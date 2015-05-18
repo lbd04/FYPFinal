@@ -13,20 +13,19 @@ $getcc = 'SELECT courseID, creditHours , semesterOffered From majorrequirement n
 $true1 = $db_conx->query($getcc) ;
 $outp1 = "" ;
 foreach($true1 as $rs) { 
-	 $outp1 = $outp1 . '{"Course" :"' . $rs['courseID']   . '" , "Credits" :"'.$rs['creditHours'] .'" , "semester" : "'.$rs['semesterOffered'].'"},';
+	 $outp1 = $outp1 . '{"Course" :"' . $rs['courseID']   . '" , "Credits" :"'.$rs['creditHours'] .'" , "semester" : "'.$rs['semesterOffered'].'" , "Attribute" : "major"},';
 }
    echo   '{"courses" :[' . substr($outp1 ,0, -1) . '] }' ;
 ?>
 <?php
 /*
 (
-SELECT courseID, creditHours, semesterOffered
+SELECT course.courseID, creditHours, semesterOffered
 FROM majorrequirement
 NATURAL JOIN course
 NATURAL JOIN requires
 WHERE courseID NOT 
 IN (
-
 SELECT courseID
 FROM enrolls
 WHERE courseID LIKE  "CMPS %"
@@ -43,7 +42,7 @@ AND major =  "CMPS"
 )
 UNION 
 (
-SELECT courseID, creditHours, semesterOffered
+SELECT course.courseID, creditHours, semesterOffered
 FROM majorrequirement
 NATURAL JOIN course
 NATURAL JOIN requires
@@ -54,7 +53,7 @@ FROM enrolls
 WHERE courseID LIKE  "CMPS %"
 AND username =  "lbd04"
 )
-AND preRequisite IS NULL 
+AND 
 AND major =  "CMPS"
 )
 */
