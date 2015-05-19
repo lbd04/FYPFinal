@@ -13,6 +13,38 @@ $outp = "" ;
 			$getc = 'update coursescount set naturale = naturale - 1 where username = "'.$data.'"  ;' ;
 		    $db_conx->query($getc) ;
 		}
+		if ( $course->Attribute == "english") {
+			$getc = 'update coursescount set english = english - 1 where username = "'.$data.'"  ;' ;
+		    $db_conx->query($getc) ;
+		}
+		if ( $course->Attribute == "cvsp1") {
+			$getc = 'update coursescount set cvsp1 = cvsp1 - 1 where username = "'.$data.'"  ;' ;
+		    $db_conx->query($getc) ;
+		}
+		if ( $course->Attribute == "cvsp2") {
+			$getc = 'update coursescount set cvsp2 = cvsp2 - 1 where username = "'.$data.'"  ;' ;
+		    $db_conx->query($getc) ;
+		}
+		if ( $course->Attribute == "Humanities II" || $course->Attribute == "Humanities I") {
+			$getc = 'update coursescount set humanity1 = humanity1 - 1 where username = "'.$data.'"  ;' ;
+		    $db_conx->query($getc) ;
+		}
+		if ( $course->Attribute == "Mathstat") {
+			$getc = 'update coursescount set requiredmath = requiredmath - 1 where username = "'.$data.'"  ;' ;
+		    $db_conx->query($getc) ;
+		}
+		if ( $course->Attribute == "rscience") {
+			$getc = 'update coursescount set requiredscience = requiredscience - 1 where username = "'.$data.'"  ;' ;
+		    $db_conx->query($getc) ;
+		}
+		if ( $course->Attribute == "Quantitative Thought") {
+			$getc = 'update coursescount set quantative = quantative - 1 where username = "'.$data.'"  ;' ;
+		    $db_conx->query($getc) ;
+		}
+		if ( $course->Attribute == "Arabic Communication Skills") {
+			$getc = 'update coursescount set arabic = arabic - 1 where username = "'.$data.'"  ;' ;
+		    $db_conx->query($getc) ;
+		}
 	}
 	
 $getc = 'delete from temp where username= "' .$data . '" ;' ;

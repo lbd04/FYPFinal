@@ -1,6 +1,8 @@
 
 <?php
 
+include_once "swiftmailer\lib\swift_required.php";
+
     if(!isset($_POST['first_name']) ||
         !isset($_POST['last_name']) ||
         !isset($_POST['email']) ||
@@ -13,8 +15,8 @@
     $email_from = $_POST['email'];
     $comments = $_POST['comments'];
      
-    $error_message = "";
-include ("Mail.php") ;
+    
+/*include ("Mail.php") ;
    require "Mail.php";
  
    // Identify the sender, recipient, mail subject, and body
@@ -52,7 +54,21 @@ include ("Mail.php") ;
  
    if (PEAR::isError($mail)) {
       echo ($mail->getMessage());
-   }
+   }*/
+
+	$transport = Swift_SmtpTransport::newInstance('smtp.gmail.com', 465, "ssl") 
+    ->setUsername('jad.abinader18@gmail.com')
+    ->setPassword('ZOUBABA.DEC.18.92');
+
+	$mailer = Swift_Mailer::newInstance($transport);
+	// the message itself
+	$message = Swift_Message::newInstance('email subject')
+    ->setFrom(array('jad.abinader18@gmail.com' => 'no reply'))
+    ->setTo(array('jad.abinader18@gmail.com'))
+    ->setBody("email body");
+
+	$result = $mailer->send($message);
+
 ?>
 
 <?php

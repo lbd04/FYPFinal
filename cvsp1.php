@@ -14,11 +14,11 @@ foreach($true as $rs) {
 }
 
 if ($outp > 0) {
-	$getc = 'SELECT courseID From ge_verify WHERE  courseID not in (SELECT courseID FROM enrolls where  username= "' .$data . '") and attribute = "Natural Science" ;' ;
+	$getc = 'SELECT courseID From ge_verify WHERE  courseID not in (SELECT courseID FROM enrolls where  username= "' .$data . '") and courseID not in (SELECT courseID FROM temp where  username= "' .$data . '") and attribute = "cvsp1" ;' ;
     $true = $db_conx->query($getc) ;
 
      foreach($true as $rs) { 
-	    $outp1 = $outp1 . '{"Course" :"' . $rs['courseID']   . '" , "Credits" :"3" , "Attribute" : "natural" },';
+	    $outp1 = $outp1 . '{"Course" :"' . $rs['courseID']   . '" , "Credits" :"3" , "Attribute" : "cvsp1" },';
      }
     echo   '{"courses" :[' . substr($outp1 ,0, -1) . '] }' ;
 }

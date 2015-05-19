@@ -17,11 +17,11 @@ if ($outp == 1) {
 	echo  '{"courses" : [ {"Course" :"ENGL 204","Credits": "3" , "Attribute" : "english"} ] }' ;
 }
 else if ($outp == 2) {
-	echo  '{"courses" : [ {"Course" :"ENGL 203","Credits": "3", "Attribute" : "english"} , {"Course" :"ENGL 204","Credits": "3", "Attribute" : "english"}] }' ;
-} else if ($outp == 2) {
-	echo  '{"courses" : [ {"Course" :"ENGL 102","Credits": "3", "Attribute" : "english"} , {"Course" :"ENGL 203","Credits": "3", "Attribute" : "english"}, {"Course" :"ENGL 204","Credits": "3", "Attribute" : "english"}] }' ;
+	echo  '{"courses" : [ {"Course" :"ENGL 203","Credits": "3", "Attribute" : "english"} ] }' ;
+} else if ($outp == 3) {
+	echo  '{"courses" : [ {"Course" :"ENGL 102","Credits": "3", "Attribute" : "english"} ] }' ;
 }
 else  {
-	'{"courses" : []}' ;
+	echo '{"courses" : []}' ;
 }
 ?>

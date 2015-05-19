@@ -25,8 +25,11 @@ if (!isset ($_POST["fname"] )){
 var semestercredit = 0 ;
 var creditsofar = 0 ;
 var remnatural = 0 ; 
-var cvsp1 = 1 ; 
-var cvsp2 = 1 ;
+var cvsp1 = 0 ; 
+var cvsp2 = 0 ;
+var hum = 0 ;
+var quan = 0 ;
+var arabic = 0
     $(document).ready(function(){
         $("#editDiv").dialog({autoOpen:false});
         $('#Semester').hide();
@@ -52,6 +55,7 @@ var cvsp2 = 1 ;
         }).success(
                 function (response) {
                     //console.log (response) ;
+					//alert (response.courses) ;
                     var obj = angular.fromJson(response.courses);
                     $scope.names = obj;
                     $scope.majortotake ;
@@ -63,14 +67,16 @@ var cvsp2 = 1 ;
                     console.log (JSON.stringify($scope.names)) ;
                     //console.log (angular.identity($scope.names)) ;
                     $scope.deleteUser = function(ind){
+						
                         var ajax = ajaxObj("POST", "delete.php");
                         ajax.onreadystatechange = function() {
                             if(ajaxReturn(ajax) == true) {
-                                //alert (ajax.responseText) ;
+                              //  alert (ajax.responseText) ;
+                              //  alert (ajax.responseText) ;
 								
                             }
                         }
-                        ajax.send( "username=" + message + "&coursestoadd="+ JSON.stringify($scope.names[ind]));
+                        ajax.send( "username=" + message + "&coursestoadd="+ JSON.stringify($scope.names[ind]) + "&attr=" +$scope.names[ind].Attribute);
                         $scope.names.splice (ind, 1) ;
                     };
                     $scope.editUser = function(ind){
@@ -183,7 +189,7 @@ var cvsp2 = 1 ;
                                // alert (ajax.responseText) ;
                                 obj = angular.fromJson(ajax.responseText);
                                 $scope.majortotake = angular.fromJson(obj.courses);
-                                rem  = $scope.majortotake.length	;
+                                //rem  = $scope.majortotake.length	;
                                 //console.log (angular.identity($scope.majortotake)) ;
 								//console.log (1) ;
 								$scope.$apply();
@@ -214,6 +220,84 @@ var cvsp2 = 1 ;
                         ajax.send( "username=" + message);
                     }
 					
+					$scope.semestercvsp1 = function () {
+                        var ajax = ajaxObj("POST", "cvsp1.php");
+                        var obj ;
+                        $scope.majortotake = [];
+                        ajax.onreadystatechange = function() {
+                            if(ajaxReturn(ajax) == true) {
+                                obj = angular.fromJson(ajax.responseText);
+                                $scope.majortotake = angular.fromJson(obj.courses);					
+                                console.log (angular.identity($scope.majortotake)) ;
+								$scope.$apply();
+                            }
+                        }
+						//alert (1) ; 
+                        ajax.send( "username=" + message);
+                    }
+					$scope.semestercvsp2 = function () {
+                        var ajax = ajaxObj("POST", "cvsp2.php");
+                        var obj ;
+                        $scope.majortotake = [];
+                        ajax.onreadystatechange = function() {
+                            if(ajaxReturn(ajax) == true) {
+                                obj = angular.fromJson(ajax.responseText);
+                                $scope.majortotake = angular.fromJson(obj.courses);					
+                                console.log (angular.identity($scope.majortotake)) ;
+								$scope.$apply();
+                            }
+                        }
+						//alert (1) ; 
+                        ajax.send( "username=" + message);
+                    }
+					$scope.semesterhumanity = function () {
+                        var ajax = ajaxObj("POST", "humanity.php");
+                        var obj ;
+                        $scope.majortotake = [];
+                        ajax.onreadystatechange = function() {
+                            if(ajaxReturn(ajax) == true) {
+                                obj = angular.fromJson(ajax.responseText);
+                                $scope.majortotake = angular.fromJson(obj.courses);					
+                                console.log (angular.identity($scope.majortotake)) ;
+								$scope.$apply();
+                            }
+                        }
+						//alert (1) ; 
+                        ajax.send( "username=" + message);
+                    }
+					
+					$scope.semesterothers = function () {
+                        var ajax = ajaxObj("POST", "others.php");
+                        var obj ;
+                        $scope.majortotake = [];
+                        ajax.onreadystatechange = function() {
+                            if(ajaxReturn(ajax) == true) {
+                                obj = angular.fromJson(ajax.responseText);
+                                $scope.majortotake = angular.fromJson(obj.courses);					
+                                console.log (angular.identity($scope.majortotake)) ;
+								$scope.$apply();
+                            }
+                        }
+						console.log($scope.majortotake) ;
+                        ajax.send( "username=" + message);
+                    }
+					
+					$scope.semesterarabic = function () {
+                        var ajax = ajaxObj("POST", "arabic.php");
+                        var obj ;
+                        $scope.majortotake = [];
+                        ajax.onreadystatechange = function() {
+                            if(ajaxReturn(ajax) == true) {
+                                obj = angular.fromJson(ajax.responseText);
+                                $scope.majortotake = angular.fromJson(obj.courses);					
+                                console.log (angular.identity($scope.majortotake)) ;
+								$scope.$apply();
+                            }
+                        }
+						console.log($scope.majortotake) ;
+                        ajax.send( "username=" + message);
+                    }
+					
                     $scope.pushpin = function (ind) {
                         var c = $scope.names [ind] ;
                         console.log (creditsofar + "  " + semestercredit) ;
@@ -224,12 +308,29 @@ var cvsp2 = 1 ;
 							else if ($scope.majortotake[ind].Attribute == "cvsp1" && cvsp1 == 0) {
 								alert ("You are out of credit for this category") ;
 							}
+							else if ($scope.majortotake[ind].Attribute == "cvsp2" && cvsp2 == 0) {
+								alert ("You are out of credit for this category") ;
+							}
+							else if ($scope.majortotake[ind].Attribute == "humanity" && hum == 0) {
+								alert ("You are out of credit for this category") ;
+							}else if ($scope.majortotake[ind].Attribute == "Arabic Communication Skills" && arabic == 0 ){                                                                                                                                                                                                                                                  
+								alert ("You are out of credit for this category") ;
+							}
 						else if (creditsofar + parseInt($scope.majortotake[ind].Credits) < semestercredit ){
 							if ($scope.majortotake[ind].Attribute == "natural") {
 							remnatural = remnatural - 1 ;
 							}
 							if ($scope.majortotake[ind].Attribute == "cvsp1") {
 							cvsp1 = cvsp1 - 1 ;
+							}
+							if ($scope.majortotake[ind].Attribute == "humanity") {
+							hum = hum - 1 ;
+							}
+							if ($scope.majortotake[ind].Attribute == "cvsp2") {
+							cvsp2 = cvsp2 - 1 ;
+							}
+							if ($scope.majortotake[ind].Attribute == "Arabic Communication Skills") {
+							arabic = arabic - 1 ;
 							}
 							var ajax = ajaxObj("POST", "furureadd.php");
 							ajax.onreadystatechange = function() {
@@ -240,6 +341,7 @@ var cvsp2 = 1 ;
                                 Credits:$scope.majortotake[ind].Credits,
 								 Attribute:$scope.majortotake[ind].Attribute
                             }
+							//alert ($scope.majortotake[ind].Attribute) ;
                         );
 						$scope.majortotake.splice (ind , 1) ;
 								$scope.$apply();
@@ -260,20 +362,30 @@ var cvsp2 = 1 ;
 					
 					$scope.delete = function (ind) {
 						creditsofar = creditsofar - parseInt($scope.future[ind].Credits) ;
+						var attr = $scope.future[ind].Attribute ;
 						var ajax = ajaxObj("POST", "futuredelete.php");
 							ajax.onreadystatechange = function() {
                             if(ajaxReturn(ajax) == true) {
-					        	$scope.majortotake.unshift ($scope.future[ind]) ;
 						        $scope.future.splice (ind , 1) ;
+								$scope.semester () ;
 								$scope.$apply();
                             }
                         }
                         ajax.send( "username=" + message+ "&course=" + $scope.future[ind].Course) ;
-						if ($scope.majortotake[ind].Attribute == "natural" ) {
+						if (attr == "natural" ) {
 							remnatural = remnatural + 1;
 						}
-						if ($scope.majortotake[ind].Attribute == "cvsp1" ) {
+						if (attr== "cvsp1" ) {
 							cvsp1 = cvsp1 + 1;
+						}
+						if (attr== "cvsp2" ) {
+							cvsp2 = cvsp2 + 1;
+						}
+						if (attr == "humanity" ) {
+							hum = hum + 1;
+						}
+						if (attr == "Arabic Communication Skills" ) {
+							arabic = arabic + 1;
 						}
 					}
 					
@@ -301,7 +413,11 @@ var cvsp2 = 1 ;
                                 $scope.remainnumber = angular.fromJson(obj.courses);
 							    $scope.$apply();
 								remnatural = $scope.remainnumber[10].number;
-								//console.log () ;
+								cvsp1 = $scope.remainnumber[7].number;
+								cvsp2 = $scope.remainnumber[8].number;
+								hum = $scope.remainnumber[12].number;
+								arabic = $scope.remainnumber[5].number;
+								//alert ($scope.remainnumber[5].number) ;
 							}
                         }
                         ajax.send( "username=" + message);
@@ -484,6 +600,11 @@ var cvsp2 = 1 ;
 							<label><button class="btn" data-ng-click="semesterss($index)"><span class="">English</span></button></label>
 							<label><button class="btn" data-ng-click="semesternatural($index)"><span class="">Natural Science</span></button></label>
 							<label><button class="btn" data-ng-click="semestercvsp1($index)"><span class="">CVSP 1</span></button></label>
+							<label><button class="btn" data-ng-click="semestercvsp2($index)"><span class="">CVSP 2</span></button></label>
+							<label><button class="btn" data-ng-click="semesterhumanity($index)"><span class="">Humanity</span></button></label>
+							<label><button class="btn" data-ng-click="semesterothers($index)"><span class="">Others</span></button></label>
+							<label><button class="btn" data-ng-click="semesterarabic($index)"><span class="">Arabic</span></button></label>
+							
 						
                     <table class="table table-hover">
                         <thead>
