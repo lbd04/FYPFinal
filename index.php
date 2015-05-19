@@ -171,7 +171,7 @@
             <div class="nav-collapse collapse navbar-collapse">
               <ul class="nav navbar-nav">
                 <li class="active"><a href="index.php">Home</a></li>
-                <li><a href="#about">About</a></li>
+                <li><a href="aboutus.html">About</a></li>
                 <li><a href="contactus.html">Contact</a></li>
         <li class="dropdown">
         <a  href = "#" class="dropdown-toggle" data-toggle="dropdown">Sign in <b class="caret"></b></a>
