@@ -29,7 +29,9 @@ var cvsp1 = 0 ;
 var cvsp2 = 0 ;
 var hum = 0 ;
 var quan = 0 ;
-var arabic = 0
+var arabic = 0 ; 
+var social1 = 0 ; 
+var social2 = 0 ;
     $(document).ready(function(){
         $("#editDiv").dialog({autoOpen:false});
         $('#Semester').hide();
@@ -128,6 +130,7 @@ var arabic = 0
 
                     $scope.semester = function () {
 						$scope.getnumber () ;
+						var v = document.getElementById("chosen").value;
                         var ajax = ajaxObj("POST", "futurecourses.php");
                         var obj ;
                         $scope.majortotake = [];
@@ -143,17 +146,17 @@ var arabic = 0
                             }
                         }
 						//alert (1) ; 
-                        ajax.send( "username=" + message);
-                        var v = document.getElementById("chosen").value;
-						if ( parseInt(v) == 1) {
+                        ajax.send( "username=" + message +"&sem=" + parseInt(v));
+                        
+						if ( parseInt(v) == 100) {
 							document.getElementById("sem").innerHTML = "Fall" ;
 							semestercredit = 18 ; 
 						}
-						else if (parseInt(v)==2) {
+						else if (parseInt(v)==10) {
 							document.getElementById("sem").innerHTML = "Spring" ;
 							semestercredit = 18 ;	
 						}
-						else if (parseInt(v)==3) {
+						else if (parseInt(v)==1) {
 							document.getElementById("sem").innerHTML = "Summer" ;	
 							semestercredit = 10 ;
 						}
@@ -162,6 +165,7 @@ var arabic = 0
                     }
 					
 					$scope.semesters = function () {
+						var v = document.getElementById("chosen").value;
                         var ajax = ajaxObj("POST", "futurecourses.php");
                         var obj ;
                         $scope.majortotake = [];
@@ -177,7 +181,7 @@ var arabic = 0
                             }
                         }
 						//alert (1) ; 
-                        ajax.send( "username=" + message);
+                        ajax.send( "username=" + message +"&sem=" + parseInt(v));
                     }
 					
 					$scope.semesterss = function () {
@@ -297,6 +301,21 @@ var arabic = 0
 						console.log($scope.majortotake) ;
                         ajax.send( "username=" + message);
                     }
+					$scope.semestersocial = function () {
+                        var ajax = ajaxObj("POST", "social.php");
+                        var obj ;
+                        $scope.majortotake = [];
+                        ajax.onreadystatechange = function() {
+                            if(ajaxReturn(ajax) == true) {
+                                obj = angular.fromJson(ajax.responseText);
+                                $scope.majortotake = angular.fromJson(obj.courses);					
+                                console.log (angular.identity($scope.majortotake)) ;
+								$scope.$apply();
+                            }
+                        }
+						console.log($scope.majortotake) ;
+                        ajax.send( "username=" + message);
+                    }
 					
                     $scope.pushpin = function (ind) {
                         var c = $scope.names [ind] ;
@@ -315,8 +334,10 @@ var arabic = 0
 								alert ("You are out of credit for this category") ;
 							}else if ($scope.majortotake[ind].Attribute == "Arabic Communication Skills" && arabic == 0 ){                                                                                                                                                                                                                                                  
 								alert ("You are out of credit for this category") ;
+							}else if (($scope.majortotake[ind].Attribute == "Social Science I"  || $scope.majortotake[ind].Attribute == "Social Science II" ) && social1 == 0 ){                                                                                                                                                                                                                                                  
+								alert ("You are out of credit for this category") ;
 							}
-						else if (creditsofar + parseInt($scope.majortotake[ind].Credits) < semestercredit ){
+						    else if (creditsofar + parseInt($scope.majortotake[ind].Credits) < semestercredit ){
 							if ($scope.majortotake[ind].Attribute == "natural") {
 							remnatural = remnatural - 1 ;
 							}
@@ -332,6 +353,9 @@ var arabic = 0
 							if ($scope.majortotake[ind].Attribute == "Arabic Communication Skills") {
 							arabic = arabic - 1 ;
 							}
+							if ($scope.majortotake[ind].Attribute == "Social Science I" ||$scope.majortotake[ind].Attribute == "Social Science II") {
+							social1 = social1 - 1 ;
+							}
 							var ajax = ajaxObj("POST", "furureadd.php");
 							ajax.onreadystatechange = function() {
                             if(ajaxReturn(ajax) == true) {
@@ -344,6 +368,9 @@ var arabic = 0
 							//alert ($scope.majortotake[ind].Attribute) ;
                         );
 						$scope.majortotake.splice (ind , 1) ;
+						if ($scope.majortotake[ind].Attribute == "Social Science II") {
+							$scope.semestersocial () ;
+							}
 								$scope.$apply();
 								//alert (ajax.responseText) ;
                             }
@@ -387,6 +414,9 @@ var arabic = 0
 						if (attr == "Arabic Communication Skills" ) {
 							arabic = arabic + 1;
 						}
+						if (attr == "Social Science I" || attr == "Social Science II" ) {
+							social1 = social1 + 1;
+						}
 					}
 					
 					$scope.savesemester = function () {
@@ -417,6 +447,8 @@ var arabic = 0
 								cvsp2 = $scope.remainnumber[8].number;
 								hum = $scope.remainnumber[12].number;
 								arabic = $scope.remainnumber[5].number;
+								social1 = $scope.remainnumber[10].number;
+								social2 =$scope.remainnumber[11].number;
 								//alert ($scope.remainnumber[5].number) ;
 							}
                         }
@@ -574,9 +606,9 @@ var arabic = 0
 
                 <label>Choose semester</label>
                 <select id="chosen" class="form-control  input-lg">
-                    <option selected="" value="1">Fall</option>
-                    <option value="2">Spring</option>
-                    <option value="3">Summer</option>
+                    <option selected="" value="100">Fall</option>
+                    <option value="10">Spring</option>
+                    <option value="1">Summer</option>
                 </select>
                 <br>
             </div>
@@ -598,12 +630,13 @@ var arabic = 0
 				        
 						    <label><button class="btn" data-ng-click="semesters($index)"><span class="">Major</span></button></label>
 							<label><button class="btn" data-ng-click="semesterss($index)"><span class="">English</span></button></label>
-							<label><button class="btn" data-ng-click="semesternatural($index)"><span class="">Natural Science</span></button></label>
+							<label><button class="btn" data-ng-click="semesternatural($index)"><span class="">Natural Sciences</span></button></label>
 							<label><button class="btn" data-ng-click="semestercvsp1($index)"><span class="">CVSP 1</span></button></label>
 							<label><button class="btn" data-ng-click="semestercvsp2($index)"><span class="">CVSP 2</span></button></label>
 							<label><button class="btn" data-ng-click="semesterhumanity($index)"><span class="">Humanity</span></button></label>
 							<label><button class="btn" data-ng-click="semesterothers($index)"><span class="">Others</span></button></label>
 							<label><button class="btn" data-ng-click="semesterarabic($index)"><span class="">Arabic</span></button></label>
+							<label><button class="btn" data-ng-click="semestersocial($index)"><span class="">Social Sciences</span></button></label>
 							
 						
                     <table class="table table-hover">
@@ -615,6 +648,9 @@ var arabic = 0
                         </thead>
                         <tbody>
                            <!-- <tr class="panel-heading" ng-repeat="x in majortotake | filter:searchText" ng-if="x.credit != 0"> -->
+							<h3 ng-if="(majortotake.length == 0 )" >
+                                No Courses to take.
+                            </h3>
 							<tr class="panel-heading" ng-repeat="x in majortotake " ng-if="x.credit != 0">
 
                                 <td>{{ x.Course }}</td>

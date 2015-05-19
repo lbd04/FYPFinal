@@ -2,6 +2,8 @@
 include_once("php_includes/db_conx.php");
 header("Access-Control-Allow-Origin: *");
 $data = $_POST['username'];
+$sem = $_POST['sem'] ;
+
 
 $getc = 'SELECT major From student WHERE username = "' .$data . '";' ;
 $true = $db_conx->query($getc) ;
@@ -13,7 +15,9 @@ $getcc = 'SELECT courseID, creditHours , semesterOffered From majorrequirement n
 $true1 = $db_conx->query($getcc) ;
 $outp1 = "" ;
 foreach($true1 as $rs) { 
+     if ( (intval($rs['semesterOffered']) & intval($sem)) == intval($sem)) {
 	 $outp1 = $outp1 . '{"Course" :"' . $rs['courseID']   . '" , "Credits" :"'.$rs['creditHours'] .'" , "semester" : "'.$rs['semesterOffered'].'"},';
+	 }
 }
    echo   '{"courses" :[' . substr($outp1 ,0, -1) . '] }' ;
 ?>

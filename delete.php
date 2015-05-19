@@ -41,6 +41,14 @@ $getc = "" ;
 		else if ( $attr == "Arabic Communication Skills") {
 			$getc = 'update coursescount set arabic = arabic + 1 where username = "'.$data.'"  ;' ;
 		    $db_conx->query($getc) ;
+		}else if ( $attr == "Social Science II") {
+			$getc = 'update coursescount set social2 = social2 + 1 where username = "'.$data.'"  ;' ;
+		    $db_conx->query($getc) ;
+			$getc = 'update coursescount set social1 = social1 + 1 where username = "'.$data.'"  ;' ;
+		    $db_conx->query($getc) ;
+		}else if ( $attr == "Social Science I") {
+			$getc = 'update coursescount set social1 = social1 + 1 where username = "'.$data.'"  ;' ;
+		    $db_conx->query($getc) ;
 		}
 		break ;
 	}

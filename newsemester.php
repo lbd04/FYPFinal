@@ -45,6 +45,16 @@ $outp = "" ;
 			$getc = 'update coursescount set arabic = arabic - 1 where username = "'.$data.'"  ;' ;
 		    $db_conx->query($getc) ;
 		}
+		if ( $course->Attribute == "Social Science I") {
+			$getc = 'update coursescount set social1 = social1 - 1 where username = "'.$data.'"  ;' ;
+		    $db_conx->query($getc) ;
+		}
+		if ( $course->Attribute == "Social Science II") {
+			$getc = 'update coursescount set social2 = social2 - 1 where username = "'.$data.'"  ;' ;
+		    $db_conx->query($getc) ;
+			$getc = 'update coursescount set social1 = social1 - 1 where username = "'.$data.'"  ;' ;
+		    $db_conx->query($getc) ;
+		}
 	}
 	
 $getc = 'delete from temp where username= "' .$data . '" ;' ;
